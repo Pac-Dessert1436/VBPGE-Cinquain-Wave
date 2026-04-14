@@ -4,7 +4,7 @@
 
 ## Description
 
-This project is a mesmerizing wave visualization implemented with VB.NET, using [@DualBrain](https://github.com/DualBrain)'s `vbPixelGameEngine` library (legacy version), and **.NET 8.0 SDK for backward compatibility**. It creates an authentic Cinquain Wave pattern that flows smoothly across the screen with customizable colors, and can be customized to fit various display requirements (see [Customization Tips](#customization-tips)).
+This project is a mesmerizing wave visualization implemented with VB.NET, using [@DualBrain](https://github.com/DualBrain)'s `vbPixelGameEngine` library (legacy version), and **.NET 8.0 SDK for backward compatibility**. It creates an authentic Cinquain Wave pattern that flows smoothly across the screen with customizable colors, and **can be customized to fit various display requirements** (see [Customization Tips](#customization-tips)).
 
 ## Features
 
@@ -30,7 +30,7 @@ VBPGE-Cinquain-Wave/
 - [.NET 8.0 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) or later
 - `vbPixelGameEngine.dll` library included in the project
 
-## Installation
+## Installation & Usage
 
 1. Clone the repository:
 ```bash
@@ -40,11 +40,13 @@ cd VBPGE-Cinquain-Wave
 
 2. Ensure `vbPixelGameEngine.dll` is in the project directory
 
-3. Build and run:
+3. Build and run the application:
 ```bash
 dotnet build
 dotnet run
 ```
+
+4. Watch the wave flow across the screen, and press ESC to exit
 
 ## Code Overview
 
@@ -53,7 +55,7 @@ dotnet run
 **Matrix Initialization** (`OnUserCreate`):
 - Creates an 80×60 grid for wave simulation
 - Initializes with a sine wave pattern using `Math.Sin()`
-- Values range from 0 to 17 (configurable via `THRESHOLD`)
+- Values range from 0 to half of `CELL_SIZE`
 
 **Wave Animation** (`UpdateEachCell`):
 - Updates wave pattern using phase shifting
@@ -76,8 +78,10 @@ DrawLine(x, y - lineHeight, x, y + lineHeight, Presets.Cyan)
 Clear(Presets.DarkBlue)
 ```
 
-**Wave Parameters**:
+**Viewport Dimensions & Wave Parameters**:
 ```vb
+Friend Const VIEWPORT_W As Integer = 800     ' Viewport width
+Friend Const VIEWPORT_H As Integer = 600     ' Viewport height
 Private Const CELL_SIZE As Integer = 10         ' Grid cell size
 Private Const UPDATE_INTERVAL As Single = 0.5F  ' Animation speed
 ```
@@ -85,7 +89,7 @@ Private Const UPDATE_INTERVAL As Single = 0.5F  ' Animation speed
 **Wave Pattern**:
 Modify the sine function parameters in `CalculateWaveValue()`:
 ```vb
-Return Math.Sin(i * 0.1 + j * 0.05 + phase) * (CELL_SIZE / 2) + (CELL_SIZE / 2)
+Return Math.Sin(i * 0.1 + j * 0.05 + phase) * (CELL_SIZE \ 2) + (CELL_SIZE \ 2)
 ```
 
 ## Technical Details
@@ -95,18 +99,12 @@ The Cinquain Wave uses a 2D sine wave function:
 - Horizontal frequency: `i * 0.1`
 - Vertical frequency: `j * 0.05` 
 - Phase shift: `phase` (increments for animation)
-- Amplitude scaling: `THRESHOLD / 2`
+- Amplitude scaling: `CELL_SIZE \ 2`
 
 ### Performance
 - 80×60 grid (4800 cells) updated at 2 FPS (configurable)
 - Efficient rendering using line drawing
 - Minimal memory footprint
-
-## Usage
-
-1. Run the application
-2. Watch the wave flow across the screen
-3. Press ESC to exit
 
 ## Development
 

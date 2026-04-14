@@ -5,17 +5,21 @@ Imports VbPixelGameEngine
 Public NotInheritable Class Program
     Inherits PixelGameEngine
 
-    Private ReadOnly m_digitMatrix(79, 59) As Integer
+    Friend Const VIEWPORT_W As Integer = 800
+    Friend Const VIEWPORT_H As Integer = 600
     Private Const CELL_SIZE As Integer = 10
     Private Const UPDATE_INTERVAL As Single = 0.5F
+
+    Private ReadOnly m_digitMatrix(VIEWPORT_W \ CELL_SIZE - 1,
+                                   VIEWPORT_H \ CELL_SIZE - 1) As Integer
 
     Public Sub New()
         AppName = "VBPGE Cinquain Wave"
     End Sub
 
     Protected Overrides Function OnUserCreate() As Boolean
-        For j As Integer = 0 To 59
-            For i As Integer = 0 To 79
+        For j As Integer = 0 To UBound(m_digitMatrix, 2)
+            For i As Integer = 0 To UBound(m_digitMatrix, 1)
                 Dim waveValue As Double = CalculateWaveValue(i, j)
                 m_digitMatrix(i, j) = CInt(Math.Max(0, Math.Min(CELL_SIZE, waveValue)))
             Next i
@@ -25,14 +29,14 @@ Public NotInheritable Class Program
 
     Private Shared Function CalculateWaveValue(i As Integer, j As Integer,
                                                Optional phase As Double = 0) As Double
-        Return Math.Sin(i * 0.1 + j * 0.05 + phase) * (CELL_SIZE / 2) + (CELL_SIZE / 2)
+        Return Math.Sin(i * 0.1 + j * 0.05 + phase) * (CELL_SIZE \ 2) + (CELL_SIZE \ 2)
     End Function
 
     Private Sub UpdateEachCell()
         Static phase As Double = 0
         phase += 0.1
-        For j As Integer = 0 To 59
-            For i As Integer = 0 To 79
+        For j As Integer = 0 To UBound(m_digitMatrix, 2)
+            For i As Integer = 0 To UBound(m_digitMatrix, 1)
                 Dim waveValue As Double = CalculateWaveValue(i, j, phase)
                 m_digitMatrix(i, j) = CInt(Math.Max(0, Math.Min(CELL_SIZE, waveValue)))
             Next i
@@ -40,8 +44,8 @@ Public NotInheritable Class Program
     End Sub
 
     Private Sub DrawEachCell()
-        For i As Integer = 0 To 79
-            For j As Integer = 0 To 59
+        For i As Integer = 0 To UBound(m_digitMatrix, 1)
+            For j As Integer = 0 To UBound(m_digitMatrix, 2)
                 Dim x As Integer = i * CELL_SIZE
                 Dim y As Integer = j * CELL_SIZE
                 Dim val As Integer = m_digitMatrix(i, j)
@@ -64,7 +68,7 @@ Public NotInheritable Class Program
 
     Friend Shared Sub Main()
         With New Program
-            If .Construct(800, 600, fullScreen:=True) Then .Start()
+            If .Construct(VIEWPORT_W, VIEWPORT_H, fullScreen:=True) Then .Start()
         End With
     End Sub
 End Class
